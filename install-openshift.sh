@@ -9,8 +9,8 @@ export DOMAIN=${DOMAIN:="$(curl -s ipinfo.io/ip).nip.io"}
 export USERNAME=${USERNAME:="$(whoami)"}
 export PASSWORD=${PASSWORD:=password}
 export VERSION=${VERSION:="3.11"}
-export SCRIPT_REPO=${SCRIPT_REPO:="https://raw.githubusercontent.com/gshipley/installcentos/master"}
-export IP=${IP:="$(ip route get 8.8.8.8 | awk '{print $NF; exit}')"}
+export SCRIPT_REPO=${SCRIPT_REPO:="https://raw.githubusercontent.com/ffsws/installcentos-openshift/master"}
+export IP=${IP:="$(ip route get 1.1.1.1 | awk '{print $NF; exit}')"}
 export API_PORT=${API_PORT:="8443"}
 
 ## Make the script interactive to set the variables
@@ -135,6 +135,21 @@ if [ "$memory" -lt "16777216" ]; then
 	export LOGGING="False"
 fi
 
+if [ "$INTERACTIVE" = "true" ]; then
+	read -rp "Deploy Metrics: ($METRICS): " choice;
+	if [ "$choice" != "" ] ; then
+		export METRICS="$choice";
+	fi
+
+	read -rp "Deploy Logging: ($LOGGING): " choice;
+	if [ "$choice" != "" ] ; then
+		export LOGGING="$choice";
+	fi
+
+	echo
+
+fi
+
 curl -o inventory.download $SCRIPT_REPO/inventory.ini
 envsubst < inventory.download > inventory.ini
 
@@ -164,7 +179,7 @@ if [ "$PVS" = "true" ]; then
 
 	curl -o vol.yaml $SCRIPT_REPO/vol.yaml
 
-	for i in `seq 1 200`;
+	for i in `seq 1 2000`;
 	do
 		DIRNAME="vol$i"
 		mkdir -p /mnt/data/$DIRNAME 
