@@ -173,6 +173,7 @@ ansible-playbook -i inventory.ini openshift-ansible/playbooks/prerequisites.yml
 ansible-playbook -i inventory.ini openshift-ansible/playbooks/deploy_cluster.yml
 
 htpasswd -b /etc/origin/master/htpasswd ${USERNAME} ${PASSWORD}
+oc login -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin ${USERNAME}
 
 if [ "$PVS" = "true" ]; then
